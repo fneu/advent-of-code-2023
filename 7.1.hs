@@ -1,0 +1,55 @@
+import Data.List
+
+data Type = HighCard | OnePair | TwoPairs | ThreeOfAKind | FullHouse | FourOfAKind | FiveOfAKind
+  deriving (Eq, Ord, Show) -- Ord: ordering based on the order of the constructors
+
+data CardValue = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace
+  deriving (Eq, Ord, Show) -- Ord: ordering based on the order of the constructors
+
+data Hand = Hand { handType :: Type, handValue :: [CardValue], bid :: Int}
+  deriving (Eq, Show)
+
+instance Ord Hand where
+  compare c1 c2 = compare (handType c1, handValue c1) (handType c2, handValue c2)
+
+parseValue :: Char -> CardValue
+parseValue c = case c of
+  '2' -> Two
+  '3' -> Three
+  '4' -> Four
+  '5' -> Five
+  '6' -> Six
+  '7' -> Seven
+  '8' -> Eight
+  '9' -> Nine
+  'T' -> Ten
+  'J' -> Jack
+  'Q' -> Queen
+  'K' -> King
+  'A' -> Ace
+
+toType :: [CardValue] -> Type
+toType values =
+  case sort $ map length . group . sort $ values of
+    [5] -> FiveOfAKind
+    [1, 4] -> FourOfAKind
+    [2, 3] -> FullHouse
+    [1, 1, 3] -> ThreeOfAKind
+    [1, 2, 2] -> TwoPairs
+    [1, 1, 1, 2] -> OnePair
+    [1, 1, 1, 1, 1] -> HighCard
+
+parseHand :: String -> Hand
+parseHand line =
+  let cardValues = map parseValue $ head $ words line in
+    Hand {
+      handType = toType cardValues,
+      handValue = cardValues,
+      bid = read $ last $ words line
+    }
+
+main :: IO ()
+main = do
+  input <- fmap lines getContents
+  let hands = sort $ map parseHand input
+  print $ sum $ zipWith (\ hand factor -> bid hand * factor) hands [1..]
