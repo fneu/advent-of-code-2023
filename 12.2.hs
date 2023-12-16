@@ -40,12 +40,12 @@ fastSolve (p, list)
   where effectiveLength = length p - sum list + 1
         amount = length list
 
--- for checking two halves of a pattern separately. Does not (recursively) evaluate first half if second half is 0
+-- for checking two halves of a pattern separately. Does not (recursively) evaluate second half if first half is 0
 fastProduct :: (String, [Int]) -> (String, [Int]) -> Int
 fastProduct (p1, l1) (p2, l2)
   | not $ plausible (p1, l1) = 0
   | not $ plausible (p2, l2) = 0
-  | result2 == 0 = 0  -- is it generally faster to check (and calculate) 1 or 2 first?
+  | result1 == 0 = 0  -- it is two times faster to check the first half here instead of the second half
   | otherwise = result1 * result2
   where result2 = solve (p2, l2)
         result1 = solve (p1, l1)
