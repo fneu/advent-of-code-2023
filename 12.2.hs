@@ -55,7 +55,7 @@ splits :: [a] -> [([a], [a])]
 splits [] = [([], [])]
 splits (x:xs) = ([], x:xs) : [(x:ys, zs) | (ys, zs) <- splits xs]
 
--- splits pattern at dot, then adds all possible combinations of numbers for each half
+-- splits pattern at dot, then multiplies all possible combinations of numbers of each half
 dotSolve :: (String, [Int]) -> Int -> Int
 dotSolve (pattern, numbers) dotIndex =
   sum
@@ -91,7 +91,7 @@ placeNumberSolve (pattern, numbers) hashIndex numberIndex =
     leftOf = take numberIndex numbers
     rightOf = drop (numberIndex + 1) numbers
 
--- given a hash, tries to place any part of any number on it.
+-- given a hash, tries to place any number on it.
 hashSolve :: (String, [Int]) -> Int -> Int
 hashSolve (pattern, numbers) hashIndex =
   sum $ map ( placeNumberSolve (pattern, numbers) hashIndex) [0..length numbers - 1]
